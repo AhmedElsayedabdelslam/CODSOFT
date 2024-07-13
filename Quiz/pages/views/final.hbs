@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finish</title>
+    <script src="
+https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js
+"></script>
+    <link href="
+https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css
+" rel="stylesheet">
+</head>
+<style>
+    .con {
+        width: 80%;
+        border-radius: 20px;
+
+
+        margin: auto;
+        color: white;
+        font-size: 24px;
+
+    }
+
+    .qu {
+        width: 80%;
+        height: 400px;
+        border-radius: 20px;
+        background-color: black;
+        margin: auto;
+        padding-left: 100px;
+        padding-top: 30px;
+
+    }
+
+
+    button {
+      margin-top: 20px;
+             background-color: rgb(114, 113, 113);
+            color: black;
+            width: 200px;
+            height: 60px;
+            border-radius: 20px;
+    }
+
+    ////////////////////////////////////////////////////////
+    .grid {
+        width: 600px;
+        height: 500px;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 10px 50px 50px 50px;
+        border: 2px solid #cbcbcb;
+
+    }
+
+    .grid h1 {
+        font-family: "sans-serif";
+        background-color: #111213;
+        font-size: 60px;
+        text-align: center;
+        color: #ffffff;
+        padding: 2px 0px;
+
+    }
+
+    #score {
+        color: #080b0c;
+        text-align: center;
+        font-size: 30px;
+    }
+
+    .grid #question {
+        font-family: "monospace";
+        font-size: 30px;
+        color: #fafafa;
+    }
+
+    .buttons {
+        margin-top: 30px;
+    }
+
+    #btn0,
+    #btn1,
+    #btn2,
+    #btn3 {
+        background-color: #181a1b;
+        width: 250px;
+        font-size: 20px;
+        color: #fff;
+        border: 1px solid #1D3C6A;
+        margin: 10px 40px 10px 0px;
+        padding: 10px 10px;
+    }
+
+    #btn0:hover,
+    #btn1:hover,
+    #btn2:hover,
+    #btn3:hover {
+        cursor: pointer;
+        background-color: #1a1c1d;
+    }
+
+    #btn0:focus,
+    #btn1:focus,
+    #btn2:focus,
+    #btn3:focus {
+        outline: 0;
+    }
+
+    #progress {
+        color: #ffffff;
+        font-size: 18px;
+    }
+      body {
+            text-align: center;
+            color: white;
+            
+            background-image: url(https://th.bing.com/th/id/R.b9e31289337d40857ea7de26a20b3905?rik=1EyCzwhqlti30g&pid=ImgRaw&r=0);
+        }
+        input {
+             background-color: black;
+            width: 600px;
+            height: 50px;
+            border-radius: 20px;
+            color: white;
+        }
+</style>
+
+<body>
+    <h2>Please Compelete Form</h2><br><br>
+    <input type="text" placeholder="YourName" id="name"><br><br>
+    <input type="text" placeholder="email" id="email"><br><br>
+    <input type="text" placeholder="Sitting-Number" id="number"><br><br>
+
+    <button id="bi" class="btn  btn-dark">OpenQuiz</button>
+    <br><br><br>
+
+    <div class="grid">
+        <div id="quiz">
+            <h1>CodeSoft-Quiz</h1>
+            <hr style="margin-bottom: 20px">
+
+            <p id="question"></p>
+
+            <div class="buttons">
+                <button id="btn0"><span id="choice0"></span></button>
+                <button id="btn1"><span id="choice1"></span></button>
+                <button id="btn2"><span id="choice2"></span></button>
+                <button id="btn3"><span id="choice3"></span></button>
+            </div>
+
+            <hr style="margin-top: 50px">
+            <footer>
+                <p id="progress">Question x of y</p>
+            </footer>
+        </div>
+    </div>
+    <button class="btn btn-dark" id="send">Next</button>
+
+    <script>
+
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+
+        const butc = params.get('QuizName')
+
+
+        const show = document.querySelector("#bi")
+        show.addEventListener("click", () => {
+            const con = document.querySelector(".con")
+            const butc = params.get('QuizName')
+
+
+            fetch("http://localhost:3000/final", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ butc: butc })
+            })
+                .then((tasks) => tasks.json())
+                .then((data) => {
+                    console.log(data)
+                    {{!-- var questions = [
+                        new Question("Hyper Text Markup Language Stand For?", ["JavaScript", "XHTML", "CSS", "HTML"], "HTML"),
+                        new Question("Which language is used for styling web pages?", ["HTML", "JQuery", "CSS", "XML"], "CSS"),
+                        new Question("Which is not a JavaScript Framework?", ["Python Script", "JQuery", "Django", "NodeJS"], "Django"),
+                        new Question("Which is used for Connect To Database?", ["PHP", "HTML", "JS", "All"], "PHP"),
+                        new Question("Webdevtrick.com is about..", ["Web Design", "Graphic Design", "SEO & Development", "All"], "All"),
+                        new Question("Your Name is ...", ["Ahmed", "Eman", "Wael", "moza"], "Ahmed")
+                    ]; --}}
+                    var questions = [
+                         new Question("", ["","" ,"" ,"" ],"-" )
+                    ];
+
+                    // create quiz
+                    var quiz = new Quiz(questions);
+                    function Quiz(questions) {
+                        this.score = 0;
+                        this.questions = questions;
+                        this.questionIndex = 0;
+                    }
+
+                    Quiz.prototype.getQuestionIndex = function () {
+                        return this.questions[this.questionIndex];
+                    }
+
+                    Quiz.prototype.guess = function (answer) {
+                        if (this.getQuestionIndex().isCorrectAnswer(answer)) {
+                            this.score++;
+                        }
+
+                        this.questionIndex++;
+                    }
+
+                    Quiz.prototype.isEnded = function () {
+                        return this.questionIndex === this.questions.length;
+                    }
+
+
+                    function Question(text, choices, answer) {
+                        this.text = text;
+                        this.choices = choices;
+                        this.answer = answer;
+                    }
+
+
+                    Question.prototype.isCorrectAnswer = function (choice) {
+                        return this.answer === choice;
+                    }
+
+
+                    function populate() {
+                        if (quiz.isEnded()) {
+                            showScores();
+                        }
+                        else {
+                            // show question
+                            var element = document.getElementById("question");
+                            element.innerHTML = quiz.getQuestionIndex().text;
+
+                            // show options
+                            var choices = quiz.getQuestionIndex().choices;
+                            for (var i = 0; i < choices.length; i++) {
+                                var element = document.getElementById("choice" + i);
+                                element.innerHTML = choices[i];
+                                guess("btn" + i, choices[i]);
+                            }
+
+                            showProgress();
+                        }
+                    };
+
+                    function guess(id, guess) {
+                        var button = document.getElementById(id);
+                        button.onclick = function () {
+                            quiz.guess(guess);
+                            populate();
+                        }
+                    };
+
+
+                    function showProgress() {
+                        var currentQuestionNumber = quiz.questionIndex + 1;
+                        var element = document.getElementById("progress");
+                        element.innerHTML = "Question " + currentQuestionNumber + " of " + quiz.questions.length;
+                    };
+
+                    function showScores() {
+                        var gameOverHTML = "<h1>Result</h1>";
+                        gameOverHTML += "<h2 id='score'> Your scores: " + quiz.score + "</h2>";
+                        var element = document.getElementById("quiz");
+                        element.innerHTML = gameOverHTML;
+                        const result = quiz.score
+                        const send = document.querySelector("#send")
+                        send.addEventListener("click", () => {
+                            console.log("sd")
+                            const myname = document.querySelector("#name").value
+                            const myemail = document.querySelector("#email").value
+                            const myNumber = document.querySelector("#number").value
+                            const url = new URL(window.location.href);
+                            const params = new URLSearchParams(url.search);
+                            const QuizName = params.get('QuizName')
+                            const username = params.get("username")
+                            const result = quiz.score
+                            const url1 = new URL(window.location.href);
+                            const params1 = new URLSearchParams(url1.search);
+                            const owner = params1.get('owner')
+                            setTimeout(() => {
+
+                                let url = new URL("http://localhost:3000/sendResult");
+                                url.searchParams.set('QuizName', QuizName);
+                                url.searchParams.set('username', username);
+                                url.searchParams.set('myname', myname)
+                                url.searchParams.set('myemail', myemail)
+                                url.searchParams.set('myNumber', myNumber);
+                                url.searchParams.set('score', result);
+                                url.searchParams.set('owner', owner);
+                                {{!-- console.log(url) --}}
+                                window.location = url
+
+                            })
+                        })
+                    };
+                    {{!-- console.log(questions) --}}
+                    populate();
+                    function draw() {
+                        let s = data.map((item) => {
+
+
+
+                            const qi = item.question1
+                            const q2 = item.question2
+                            const q3 = item.question3
+                            const q4 = item.question4
+                            const q5 = item.question5
+                            const q6 = item.question6
+                            //  console.log(qi,q2)
+
+                            const f = new Question(qi, [q2, q3, q4, q5], q6)
+                            const ques = [f]
+                            questions.push(f)
+
+                            return {
+                                ques
+                            }
+
+                        })
+                        {{!-- console.log(questions) --}}
+
+                    }
+                    draw()
+
+
+                }).catch((e) => {
+                    console.log(e)
+                })
+        })
+
+        const url1 = new URL(window.location.href);
+        const params1 = new URLSearchParams(url1.search);
+        const EndTime = params1.get('EndTime')
+
+        const dirationEnd = params1.get("diurationEnd")
+
+        const myInterval = setInterval(myTimer, 1000);
+        function myTimer() {
+            const date = new Date();
+            const time = date.toLocaleTimeString();
+
+            if (time == EndTime + " " + dirationEnd) {
+                clearInterval(myInterval);
+
+
+                setTimeout(() => {
+                    window.location = "http://localhost:3000/createQuiz"
+                    alert("Time Out")
+
+                }, 100)
+            }
+        }
+        console.log(EndTime)
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+</body>
+
+</html>

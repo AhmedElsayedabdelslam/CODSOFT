@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AllQuiz</title>
+     <script src="
+https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js
+"></script>
+    <link href="
+https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css
+" rel="stylesheet">
+    <style>
+        body {
+            background-color: gray;
+        }
+
+        .con {
+            width: 90%;
+            height: 200px;
+            background-color: rgb(0, 0, 0);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            margin: auto;
+            color: white;
+            font-size: 18px;
+        }
+
+        .name,
+        .start {
+            width: 40%;
+            height: 140px;
+            margin-top: 50px;
+            background-color: black;
+            border-radius: 10px;
+
+                {
+                    {
+                    !-- visibility: visible;
+                    --
+                }
+            }
+        }
+        .head {
+            width: 100%;
+            height: 80px;
+            background-color: black;
+            color: white;
+            font-size: 20ppx;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        #thename,#time {
+            font-size: 20px;
+            padding-top: 20px;
+        }
+        .all {
+            margin-top: 30px;
+            font-size: 25px;
+        }
+        .namequiz {
+            font-size: 25px;
+            padding-left: 40px;
+        }
+        .btn {
+            margin-left: 20px;
+            background-color: rgb(95, 94, 94);
+            color: white;
+            width: 70%;
+        }
+        .st {
+            font-size: 35px;
+        }
+        .ins {
+            width: 100%;  
+            height: 40px;  
+            text-align: center;
+        }
+        .sp {
+            color: rgb(189, 186, 186);
+            font-size: 25px;
+            padding-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="head">
+        <label for="" id="thename"></label><br><br>
+        <label for="" id="time"></label>
+    </div>
+    <div class="ins">
+        <span class="sp">Your quiz will be start at the time in each quiz,Thanks</span>
+    </div>
+
+    <div class="all">
+        <div class="con">
+            <div class="name">
+                <label for="" class="namequiz"></label><br><br>
+                <input type="button" value="Go to quiz" QuizName="" StartTime="" EndTime="" check="" username=""
+                    diurationStart="" diurationEnd="" class="btn">
+            </div>
+            <ddiv class="start">
+                <label for="" class="st"></label><br>
+                <label for="">The quiz is done by <p></p></label>
+
+            </ddiv>
+        </div>
+    </div>
+
+    <script>
+
+
+        const con = document.querySelector(".all")
+        const thename = document.querySelector("#thename")
+        const thetime = document.querySelector("#time")
+        const yourname = localStorage.getItem("username")
+        console.log(yourname)
+        const nowmyInterval = setInterval(timer, 1000);
+        function timer() {
+             const thetime = document.querySelector("#time")
+            const date = new Date();
+            const nowtime = date.toLocaleTimeString();
+           
+            thetime.textContent = nowtime
+        }
+         thename.textContent = "Welcome" + " " + yourname
+
+
+
+        fetch("http://localhost:3000/showallquiz", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((tasks) => tasks.json())
+            .then((data) => {
+                {{!-- console.log(data) --}}
+
+
+                function draw() {
+                    let s = data.map((item) => {
+                        return `
+                             <div class="con"> 
+                            <div class="name">
+                              <label for="" class="namequiz">${item.Name}</label><br><br>
+                               <input type="button"  value="Go to quiz" QuizName=${item.Name} StartTime=${item.StartTime} EndTime=${item.EndTime} check=${item.check} usernam=${item.username} diurationStart=${item.diurationStart} diurationEnd=${item.diurationEnd} class="btn">
+                                </div>
+                           <ddiv class="start">
+                              <label for="" class="st">${item.StartTime}</label><br><br>
+                              <label for="">The quiz is done by <p>${item.username} </p> </label>
+
+                                     </ddiv>
+                                   </div>
+                                      
+                    `
+                    })
+                    con.innerHTML = s
+                }
+                draw()
+                const btns = document.querySelectorAll('.btn');
+
+                Array.from(btns).forEach(function (btn) {
+                    const startTime = btn.getAttribute("StartTime")
+                    const diurationStart = btn.getAttribute("diurationStart")
+                    btn.style.visibility = "hidden"
+                    const myInterval = setInterval(myTimer, 1000);
+                    function myTimer() {
+                        const date = new Date();
+                        const time = date.toLocaleTimeString();
+                        {{!-- console.log(time) --}}
+                        if (time == startTime + " " + diurationStart) {
+                            clearInterval(myInterval);
+                            {{!-- console.log(time) --}}
+                            btn.style.visibility = "visible"
+                        }
+                    }
+
+                    btn.addEventListener('click', function () {
+                        console.log(btn.getAttribute("QuizName"), btn.getAttribute("StartTime"));
+                        const quizName = btn.getAttribute("QuizName")
+                        const startTime = btn.getAttribute("StartTime")
+                        const EndTime = btn.getAttribute("EndTime")
+                        const check = btn.getAttribute("check")
+                        const diurationStart = btn.getAttribute("diurationStart")
+                        const diurationEnd = btn.getAttribute("diurationEnd")
+                        const owner = localStorage.getItem("id")
+                        const username = btn.getAttribute("username")
+
+                        setTimeout(() => {
+                            let url = new URL("http://localhost:3000/final");
+                            url.searchParams.set('QuizName', quizName);
+                            url.searchParams.set('StartTime', startTime);
+                            url.searchParams.set('EndTime', EndTime);
+                            url.searchParams.set('username', username);
+                            url.searchParams.set('check', check);
+                            url.searchParams.set('diurationStart', diurationStart)
+                            url.searchParams.set('diurationEnd', diurationEnd)
+                            url.searchParams.set('owner', owner);
+                            {{!-- console.log(url) --}}
+                            window.location = url
+                        })
+
+
+
+                    });
+                });
+
+
+
+
+
+
+
+
+
+
+
+            })
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+</body>
+
+</html>
